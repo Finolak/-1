@@ -17,8 +17,12 @@ class Car:
     """
 
     def __init__(self, make: str, model: str, year: int):
-        if year < 1886:  # Первый автомобиль был создан в 1886 году
-            raise ValueError("Год выпуска не может быть раньше 1886.")
+        if not isinstance(make, str) or not isinstance(model, str):
+            raise TypeError("Производитель и модель должны быть строками.")
+        if not isinstance(year, int):
+            raise TypeError("Год выпуска должен быть целым числом.")
+        if year < 1886 or year > 2024:
+            raise ValueError("Год выпуска должен быть между 1886 и 2024.")
         self.make = make
         self.model = model
         self.year = year
@@ -32,14 +36,15 @@ class Car:
         """
         return f"Двигатель запущен."
 
-    def stop_engine(self) -> str:
-        """Останавливает двигатель автомобиля.
+    def get_info(self) -> str:
+        """Возвращает информацию об автомобиле в формате строки.
 
+        Пример:
         >>> car = Car("Toyota", "Camry", 2020)
-        >>> car.stop_engine()
-        'Двигатель заглушен.'
+        >>> car.get_info()
+        'Toyota Camry, 2020'
         """
-        return f"Двигатель заглушен."
+        return f"{self.make} {self.model}, {self.year}"
 
 class Tree:
     """
@@ -59,8 +64,12 @@ class Tree:
     """
 
     def __init__(self, species: str, height: float, age: int):
-        if height < 0:
-            raise ValueError("Высота дерева не может быть отрицательной.")
+        if not isinstance(species, str):
+            raise TypeError("Вид дерева должен быть строкой.")
+        if not isinstance(height, (float, int)) or height < 0:
+            raise ValueError("Высота дерева должна быть неотрицательным числом.")
+        if not isinstance(age, int) or age < 0:
+            raise ValueError("Возраст дерева должен быть неотрицательным целым числом.")
         self.species = species
         self.height = height
         self.age = age
@@ -72,13 +81,19 @@ class Tree:
         'Дерево Дуб выросло.'
         """
         return f"Дерево {self.species} выросло."
-    def shed_leaves(self) -> str:
-        """Сбрасывает листья дерева.
+    def change_season(self, season: str) -> str:
+        """Изменяет состояние дерева в зависимости от сезона.
         >>> tree = Tree("Клён", 6.0, 12)
-        >>> tree.shed_leaves()
-        'Дерево Клён сбросило листья.'
+        >>> tree.change_season("осень")
+        'Дерево Клён готовится к сбросу листьев.'
         """
-        return f"Дерево {self.species} сбросило листья."
+        seasons = {
+            "весна": f"Дерево {self.species} распускает новые листья.",
+            "лето": f"Дерево {self.species} полное зелени.",
+            "осень": f"Дерево {self.species} готовится к сбросу листьев.",
+            "зима": f"Дерево {self.species} спит под снегом."
+        }
+        return seasons.get(season.lower(), "Неверное время года. Пожалуйста, введите 'весна', 'лето', 'осень' или 'зима'.")
 
 class Bed:
     """
@@ -100,6 +115,12 @@ class Bed:
     def __init__(self, size: str, material: str, has_headboard: bool):
         if size not in ["однокомнатная", "двухспальная", "королевская"]:
             raise ValueError("Размер кровати должен быть 'однокомнатная', 'двухспальная' или 'королевская'.")
+
+        if not isinstance(material, str) or not material:
+            raise ValueError("Материал кровати должен быть непустой строкой.")
+
+        if not isinstance(has_headboard, bool):
+            raise TypeError("has_headboard должен быть булевым значением (True или False).")
         self.size = size
         self.material = material
         self.has_headboard = has_headboard
@@ -112,14 +133,22 @@ class Bed:
         'Кровать застелена.'
         """
         return f"Кровать застелена."
-    def change_sheets(self) -> str:
-        """Меняет простыни на кровати.
+
+    def adjust_headboard(self, new_height: int) -> str:
+        """Регулирует высоту изголовья кровати.
 
         >>> bed = Bed("двухспальная", "дерево", True)
-        >>> bed.change_sheets()
-        'Простыни на кровати двухспальная заменены.'
+        >>> bed.adjust_headboard(120)
+        'Высота изголовья изменена на 120 см.'
         """
-        return f"Простыни на кровати {self.size} заменены."
+        if not self.has_headboard:
+            return "У этой кровати нет изголовья для регулировки."
+
+        if new_height <= 0:
+            raise ValueError("Высота изголовья должна быть положительным числом.")
+
+        self.headboard_height = new_height
+        return f"Высота изголовья изменена на {new_height} см."
 
 if __name__ == "__main__":
     # TODO работоспособность экземпляров класса проверить с помощью doctest
